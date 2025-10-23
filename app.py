@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, send_from_directory
 import os
 
 app = Flask(__name__, static_folder='.')
@@ -9,6 +9,9 @@ def index():
 
 @app.route('/<path:path>')
 def serve_static(path):
+    # Security: prevent directory traversal
+    if '..' in path or path.startswith('/'):
+        return "Invalid path", 400
     return send_from_directory('.', path)
 
 if __name__ == '__main__':
